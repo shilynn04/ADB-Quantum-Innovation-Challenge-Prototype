@@ -1,0 +1,132 @@
+{
+ "scenario": "adb-base",
+ "basis": [
+  "cx",
+  "rz",
+  "sx",
+  "x",
+  "reset",
+  "delay",
+  "measure"
+ ],
+ "verify_plain": {
+  "paths_checked": 1000000,
+  "arith_matches_model": true,
+  "ancillas_returned_clean": true,
+  "inputs_preserved": true,
+  "loaders_ok": true,
+  "amplitude_from_circuit": 3.163304630917878e-05,
+  "amplitude_exact": 3.1633046309178924e-05
+ },
+ "plain_A": {
+  "label": "A (plain)",
+  "qubits": 39,
+  "cx": 850,
+  "1q": 1399,
+  "depth": 1235,
+  "cx_depth": 623,
+  "transpile_s": 0.1
+ },
+ "plain_Q": {
+  "label": "Q (plain)",
+  "qubits": 39,
+  "cx": 6494,
+  "1q": 9987,
+  "depth": 10915,
+  "cx_depth": 4993,
+  "transpile_s": 0.3
+ },
+ "verify_iw": {
+  "lookup_bit_ok": true,
+  "encoded_amplitude_from_circuit": 0.0005023400027783229,
+  "encoded_amplitude_model": 0.0005023400027783225,
+  "W": 0.0629713861811204
+ },
+ "iw_A": {
+  "label": "A (IW)",
+  "qubits": 52,
+  "cx": 24545,
+  "1q": 45481,
+  "depth": 47199,
+  "cx_depth": 16293,
+  "transpile_s": 1.0
+ },
+ "iw_Q": {
+  "label": "Q (IW)",
+  "qubits": 52,
+  "cx": 55288,
+  "1q": 98755,
+  "depth": 105078,
+  "cx_depth": 38047,
+  "transpile_s": 2.1
+ },
+ "plain_A_heavyhex": {
+  "label": "A (plain) on heavy-hex",
+  "qubits": 39,
+  "cx": 2293,
+  "1q": 1399,
+  "depth": 1903,
+  "cx_depth": 1233,
+  "transpile_s": 0.1
+ },
+ "projection_iw_unary_qrom": {
+  "t_count_per_Q_without_lookups": 116597,
+  "qrom_t_per_Q": 12240,
+  "t_count_per_Q": 128837,
+  "t_count_total": 4085228014.5,
+  "plain_t_count_total": 4215869270.0,
+  "note": "projection, not built: lookups via unary-iteration QROM (Babbush et al. 2018, 4(N-1) T each, N=256)"
+ },
+ "runs_rare_tail_2pct": {
+  "plain IQAE": {
+   "rel_rmse": 0.020008609175985088,
+   "oracle_calls": 204059.5,
+   "max_grover_power": 1331,
+   "deepest_circuit_depth": 14529100,
+   "deepest_circuit_cx": 8644364,
+   "total_cx_all_shots": 662581196.5,
+   "shots_per_round": 100,
+   "ft": {
+    "rotations": 784,
+    "t_per_rotation": 47.0,
+    "t_count_per_oracle": 41320,
+    "t_count_total": 4215869270.0
+   },
+   "surface_code": {
+    "distance": 19,
+    "physical_qubits_data": 28158,
+    "note": "excludes magic-state factories; use a full resource estimator in Phase 2"
+   }
+  },
+  "IW-IQAE (loss^2)": {
+   "rel_rmse": 0.013966052937363192,
+   "oracle_calls": 63417.0,
+   "max_grover_power": 334,
+   "deepest_circuit_depth": 35143251,
+   "deepest_circuit_cx": 18490737,
+   "total_cx_all_shots": 1753099548.0,
+   "shots_per_round": 100,
+   "ft": {
+    "rotations": 49858,
+    "t_per_rotation": 52.0,
+    "t_count_per_oracle": 2599641,
+    "t_count_total": 82430716648.5
+   },
+   "surface_code": {
+    "distance": 21,
+    "physical_qubits_data": 45864,
+    "note": "excludes magic-state factories; use a full resource estimator in Phase 2"
+   }
+  }
+ },
+ "nisq_plain": {
+  "cx_budget_at_F0.5_p1e-3": 693,
+  "A_alone_cx": 850,
+  "max_k_feasible": -1
+ },
+ "nisq_iw": {
+  "cx_budget_at_F0.5_p1e-3": 693,
+  "A_alone_cx": 24545,
+  "max_k_feasible": -1
+ }
+}

@@ -55,3 +55,11 @@ Python 3.12.3, numpy 2.5.4, scipy 1.18.1, matplotlib 3.11.2 (as run); CPU only (
 
 ## AI-use disclosure
 This prototype's code, benchmark harness and README were drafted with the assistance of Claude (Anthropic). The authors are responsible for reviewing and verifying the code and results before submission. Model equations and benchmark definitions are from the ADB Quantum Challenge brief.
+
+## v2 additions (branch `feat/iqae-weighted-resources`)
+See **[docs/V2_NOTES.md](docs/V2_NOTES.md)**. In short:
+* **Iterative QAE** replaces fixed-schedule MLAE: no 15% plateau, with confidence intervals (coverage 0.95-1.00).
+* **Importance-weighted IQAE** (grid-snapped proposal, exactly unbiased): on the rare joint tail it is 4-9x more accurate than the best classical method at equal budget, in all five scenarios. On expected loss, stratified importance sampling (a stronger classical baseline added in v2) still wins.
+* **Gate-level resource estimate**: oracles built and verified in Qiskit (plain A: 39 qubits, 850 CX; Grover operator: 6,494 CX), T-counts, surface-code distance, NISQ feasibility, error mitigation and hardware modality.
+
+![v2 error vs budget](results/v2_error_vs_budget.png)

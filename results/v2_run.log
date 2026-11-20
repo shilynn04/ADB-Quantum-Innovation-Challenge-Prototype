@@ -1,0 +1,19 @@
+encodings done
+classical extras n = 1024
+classical extras n = 2048
+classical extras n = 4096
+classical extras n = 8192
+classical extras n = 16384
+classical extras n = 32768
+classical extras n = 65536
+quantum sweep expected_loss_usd_m
+quantum sweep joint_attachment_prob
+quantum sweep loss_exceed_T_prob
+quantum sweep stop_loss_usd_m
+quantum sweep both_exhausted_prob
+scenario adb-base
+scenario adb-independent
+scenario adb-common-shock
+scenario adb-rain-stress
+scenario adb-rain-cover
+saved results/v2_results.json
