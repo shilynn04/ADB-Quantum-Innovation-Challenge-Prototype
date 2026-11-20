@@ -1,0 +1,15 @@
+statevector check max |sim - sin^2((2k+1)theta)| = 8.482797797526587e-16
+classical done n = 1024
+classical done n = 2048
+classical done n = 4096
+classical done n = 8192
+classical done n = 16384
+classical done n = 32768
+classical done n = 65536
+scenario adb-base done
+scenario adb-independent done
+scenario adb-common-shock done
+scenario adb-rain-stress done
+scenario adb-rain-cover done
+saved results/results.json
+done
