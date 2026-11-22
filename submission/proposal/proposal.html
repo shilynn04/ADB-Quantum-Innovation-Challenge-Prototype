@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Technical Proposal: Importance-Weighted Amplitude Estimation for the Rare Joint Tail</title>
+<style>
+  @page { size: A4; margin: 18mm 18mm 20mm 18mm; }
+  :root {
+    --ink: #1b1f24; --muted: #555d66; --rule: #c9ced4; --accent: #1f4e79; --soft: #eef3f8;
+    --good: #1d6b35; --warn: #8a5a00;
+  }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: "Bitstream Charter", "Charter", "Liberation Serif", "DejaVu Serif", serif;
+         font-size: 10.4pt; line-height: 1.42; color: var(--ink); margin: 0; }
+  h1, h2, h3, h4, .sans, table, figcaption, .caption, .titleblock, .keybox .label {
+         font-family: "Inter", "Liberation Sans", "DejaVu Sans", sans-serif; }
+  h1 { font-size: 19pt; line-height: 1.2; margin: 0 0 6pt; color: var(--accent); font-weight: 700; }
+  h2 { font-size: 13.5pt; margin: 18pt 0 6pt; color: var(--accent); font-weight: 700;
+       border-bottom: 1.2pt solid var(--accent); padding-bottom: 3pt; break-after: avoid; }
+  h3 { font-size: 11pt; margin: 12pt 0 4pt; font-weight: 650; break-after: avoid; }
+  h4 { font-size: 10pt; margin: 8pt 0 3pt; font-weight: 650; break-after: avoid; }
+  p { margin: 0 0 6pt; text-align: justify; hyphens: auto; orphans: 3; widows: 3; }
+  ul, ol { margin: 0 0 6pt 0; padding-left: 16pt; }
+  li { margin: 0 0 2.5pt; }
+  code, .mono { font-family: "JetBrains Mono", "DejaVu Sans Mono", monospace; font-size: 8.8pt; }
+  .eq { font-family: "Bitstream Charter", "Liberation Serif", serif; font-style: italic; text-align: center;
+        margin: 5pt 0 7pt; font-size: 10.6pt; }
+  .eq .n { float: right; font-style: normal; color: var(--muted); }
+  .titleblock { border-top: 3pt solid var(--accent); padding-top: 10pt; margin-bottom: 10pt; }
+  .titleblock .kicker { font-size: 8.5pt; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .titleblock .meta { font-size: 9pt; color: var(--muted); margin-top: 4pt; line-height: 1.5; }
+  .titleblock .meta b { color: var(--ink); font-weight: 600; }
+  .abstract { background: var(--soft); border-left: 3pt solid var(--accent); padding: 8pt 10pt; margin: 10pt 0 6pt; }
+  .abstract p { margin-bottom: 4pt; }
+  .keybox { border: 0.8pt solid var(--rule); border-radius: 3pt; padding: 7pt 10pt; margin: 8pt 0 10pt; break-inside: avoid; }
+  .keybox .label { font-size: 8pt; letter-spacing: .07em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 3pt; }
+  .keybox ul { margin-bottom: 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 8.6pt; margin: 4pt 0 3pt; break-inside: avoid; }
+  th, td { padding: 3pt 5pt; text-align: left; vertical-align: top; border-bottom: 0.5pt solid var(--rule); }
+  thead th { border-top: 1pt solid var(--ink); border-bottom: 0.8pt solid var(--ink); font-weight: 650; }
+  tbody tr:last-child td { border-bottom: 1pt solid var(--ink); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.best { font-weight: 700; color: var(--good); }
+  .tblwrap { break-inside: avoid; margin: 6pt 0 10pt; }
+  .caption { font-size: 8.4pt; color: var(--muted); margin: 0 0 3pt; }
+  .caption b { color: var(--ink); }
+  figure { margin: 6pt 0 10pt; break-inside: avoid; }
+  figure img { width: 100%; display: block; border: 0.5pt solid var(--rule); }
+  figcaption { font-size: 8.4pt; color: var(--muted); margin-top: 3pt; }
+  figcaption b { color: var(--ink); }
+  .small { font-size: 8.8pt; }
+  .muted { color: var(--muted); }
+  .refs { font-size: 8.6pt; padding-left: 18pt; }
+  .refs li { margin-bottom: 2pt; text-align: left; }
+  .pagebreak { break-before: page; }
+  .tag { display: inline-block; font-family: "Inter", sans-serif; font-size: 7.6pt; padding: 0 4pt; border-radius: 2pt;
+         background: var(--soft); color: var(--accent); font-weight: 600; }
+  sup, sub { font-size: 70%; line-height: 0; }
+  a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="titleblock">
+  <div class="kicker">ADB Quantum Innovation Challenge 2026 · Phase 1 Technical Proposal</div>
+  <h1>Importance-Weighted Amplitude Estimation for the Rare Joint Tail of Disaster Relief Bonds</h1>
+  <div class="meta">
+    <b>Team:</b> {{TEAM_NAME}} &nbsp;·&nbsp; <b>Team ID:</b> {{TEAM_ID}} &nbsp;·&nbsp; <b>Members:</b> {{TEAM_MEMBERS}}<br>
+    <b>Date:</b> 22 November 2026 &nbsp;·&nbsp; <b>Prototype:</b> <a href="https://github.com/legaxy6-repo/adb-ivan">github.com/legaxy6-repo/adb-ivan</a>
+  </div>
+</div>
+
+<div class="abstract">
+  <p><b>Summary.</b> The probability that disaster losses co-move across borders decides whether pooling risk reduces cost and whether parametric triggers pay when real losses occur. For ADB's Kyrgyz Republic and Tajikistan Disaster Relief Bond benchmark, the hardest quantity is the rare joint tail: both bonds exhausted within the three-year term, with probability 3.2&nbsp;×&nbsp;10<sup>−5</sup>. Plain Monte Carlo and quasi-Monte Carlo return mostly zeros at practical budgets.</p>
+  <p>We combine <b>Iterative Quantum Amplitude Estimation (IQAE)</b> with an <b>importance-weighted amplitude encoding</b> that is <b>exactly unbiased</b> by construction, and we build the corresponding state-preparation oracles <b>gate by gate in Qiskit</b>, verified against the exact model on all 10<sup>6</sup> three-year paths. At equal query budget, ideal importance-weighted IQAE estimates the rare joint tail with 1.3–1.8% relative RMSE in all five benchmark scenarios, against 7–15% for the best classical baseline. That is 4–9× more accurate per query. We also report where strong classical methods still win (expected loss), and what fault-tolerant hardware the quantum method would need.</p>
+</div>
+
+<!-- ======================================================================= -->
+<h2>1. Problem &amp; Approach</h2>
+
+<h3>1.1 Why the joint tail matters</h3>
+<p>Catastrophe bonds and parametric insurance move disaster losses from governments to capital markets before a disaster happens. Their pricing and reliability rest on catastrophe models that estimate how often extreme events occur, how severe they are, and where they hit. Two problems persist. Only a couple of decades of high-quality disaster data exist, and the dependence between perils across countries is poorly constrained by history. The joint tail, meaning how extreme events co-move across borders, determines whether pooling risk across countries reduces cost and whether parametric triggers pay out when real losses occur [ADB brief]. It cannot be estimated from history alone, so it must be computed from a model. At a fixed computational budget, the accuracy of that computation is the bottleneck.</p>
+
+<h3>1.2 The benchmark</h3>
+<p>The challenge benchmark models two US$80m bonds (Kyrgyz Republic, Tajikistan) over a three-year term. Each is split into a US$70m earthquake sub-limit, paying in quarter steps, and a US$10m precipitation sub-limit, paying at most once per term. Earthquake payouts follow a compound-Poisson process with shared events between the countries (shared rate <i>c</i>&nbsp;=&nbsp;0.0029667 per year in the base case). Precipitation triggers are Poisson with a common component. An annual state (<i>a</i>,&nbsp;<i>b</i>,&nbsp;<i>r</i><sub>1</sub>,&nbsp;<i>r</i><sub>2</sub>) takes 100 values. Three independent years are added and capped at (4,&nbsp;4,&nbsp;1,&nbsp;1), giving five focus targets under five scenarios. Our exact reference implementation (<code>jointloss/model.py</code>) reproduces every intermediate value of the brief: the Table 2 rates, <i>c</i>, the 92.62% and 89.40% no-payout probabilities, and the precipitation split. It also reproduces all 25 values of the brief's Table 6.</p>
+
+<div class="tblwrap">
+<div class="caption"><b>Table 1.</b> Focus targets, base scenario (<span class="mono">adb-base</span>), exact values from our reference model (identical to the brief's Table 6).</div>
+<table>
+<thead><tr><th>Target</th><th>Definition</th><th class="num">Exact value</th><th>Character</th></tr></thead>
+<tbody>
+<tr><td>Expected principal loss</td><td>E[<i>L</i>]</td><td class="num">US$10.06m</td><td>smooth, common</td></tr>
+<tr><td>Joint attachment</td><td>Pr(<i>L</i><sub>1</sub>&nbsp;&gt;&nbsp;0 and <i>L</i><sub>2</sub>&nbsp;&gt;&nbsp;0)</td><td class="num">4.414%</td><td>joint, moderate</td></tr>
+<tr><td>Portfolio exceedance</td><td>Pr(<i>L</i>&nbsp;&gt;&nbsp;US$80m)</td><td class="num">1.205%</td><td>tail</td></tr>
+<tr><td>Stop-loss</td><td>E[max(<i>L</i>&nbsp;−&nbsp;80m,&nbsp;0)]</td><td class="num">US$282,355</td><td>tail, expectation</td></tr>
+<tr><td>Both bonds exhausted</td><td>Pr(<i>L</i><sub>1</sub>&nbsp;=&nbsp;<i>L</i><sub>2</sub>&nbsp;=&nbsp;80m)</td><td class="num">0.0032%</td><td>rare joint tail</td></tr>
+</tbody></table>
+</div>
+
+<h3>1.3 Where classical methods struggle</h3>
+<p>Exact enumeration takes about 0.2&nbsp;ms for two countries, so runtime is not the issue at this size. The issue is accuracy on the rare joint tail at a fixed budget, and how that grows with portfolio size. With two perils on the ADB grid the annual state space is 10<sup><i>n</i></sup> for <i>n</i> countries, so exact enumeration soon becomes impractical while the joint-tail probability shrinks. The Monte Carlo error at budget <i>N</i> falls as 1/√<i>N</i>, so its relative error on a probability <i>a</i> scales as 1/√(<i>Na</i>). At <i>a</i>&nbsp;=&nbsp;3.2&nbsp;×&nbsp;10<sup>−5</sup>, Monte Carlo and scrambled Sobol still show 60–70% relative RMSE at 65,536 paths. Importance sampling is the strongest of the brief's baselines at about 12%.</p>
+
+<h3>1.4 Our approach</h3>
+<div class="keybox">
+<div class="label">Approach in five parts</div>
+<ol>
+<li><b>Exact reference and fair baselines.</b> The brief's four sampling baselines (Monte Carlo, scrambled Sobol, stratified, importance sampling), plus two <i>stronger</i> classical baselines we added so the quantum method is not compared only against the easiest: importance sampling with a loss<sup>2</sup> tilt, and stratified importance sampling with pilot-based Neyman allocation.</li>
+<li><b>Iterative QAE</b> (Grinko et al. 2021) instead of fixed-schedule maximum-likelihood AE. It removes an aliasing plateau and provides confidence intervals.</li>
+<li><b>Importance-weighted amplitude encoding (IW-QAE).</b> Load a proposal distribution and rotate by the path weight, so the rare-tail amplitude is boosted. We <b>snap the proposal to a fixed-point grid</b> so that every weight is exactly representable and the estimator is <b>unbiased</b>.</li>
+<li><b>Gate-level, verified oracles.</b> Both oracles are built in Qiskit 2.6.2, verified exhaustively against the model, and costed: qubits, CX count, depth, routing overhead, T-count and surface-code distance.</li>
+<li><b>Scaling argument.</b> Shared events make countries conditionally independent, so loader cost grows linearly with portfolio size while the joint-tail amplitude shrinks. That is the regime where the 1/√<i>a</i> versus 1/<i>a</i> cost difference matters (Section 2.8).</li>
+</ol>
+</div>
+
+<!-- ======================================================================= -->
+<h2>2. Technical Rationale</h2>
+
+<h3>2.1 Amplitude estimation for portfolio targets</h3>
+<p>Every target has the form <i>μ</i>&nbsp;=&nbsp;E<sub><i>p</i></sub>[<i>f</i>(<i>X</i>)] with <i>X</i> a three-year path and <i>f</i> scaled into [0,&nbsp;1] (Eq. 1 of the brief). A state-preparation oracle prepares</p>
+<p class="eq">A|0⟩ = Σ<sub><i>x</i></sub> √<i>p</i>(<i>x</i>) |<i>x</i>⟩ ( √(1−<i>f</i>(<i>x</i>)) |0⟩ + √<i>f</i>(<i>x</i>) |1⟩ ),&nbsp;&nbsp;&nbsp; <i>a</i> = sin<sup>2</sup><i>θ</i> = E<sub><i>p</i></sub>[<i>f</i>] <span class="n">(1)</span></p>
+<p>The Grover operator <i>Q</i>&nbsp;=&nbsp;−<i>A S</i><sub>0</sub><i>A</i><sup>†</sup><i>S</i><sub>χ</sub> rotates by 2<i>θ</i>. Measuring the objective qubit after <i>Q</i><sup><i>k</i></sup><i>A</i>|0⟩ returns 1 with probability sin<sup>2</sup>((2<i>k</i>+1)<i>θ</i>). Amplitude estimation [Brassard et al. 2002; Montanaro 2015] reaches additive error <i>ε</i> with <i>O</i>(1/<i>ε</i>) applications of <i>A</i>, against <i>O</i>(1/<i>ε</i><sup>2</sup>) samples for Monte Carlo. For a small target, the relative error per query scales as</p>
+<p class="eq">relative error<sub>QAE</sub> ∼ 1 / (<i>M</i>√<i>a</i>)&nbsp;&nbsp;&nbsp;versus&nbsp;&nbsp;&nbsp;relative error<sub>MC</sub> ∼ 1 / √(<i>N a</i>) <span class="n">(2)</span></p>
+<p>so the advantage is largest where <i>a</i> is tiny, which is exactly the rare joint tail. We count cost as applications of <i>A</i>: a shot at Grover power <i>k</i> costs 2<i>k</i>+1. This is a query-complexity comparison, not a wall-clock claim; Section 3 converts queries into gates.</p>
+
+<h3>2.2 Iterative QAE instead of fixed-schedule MLAE</h3>
+<p>Our first prototype used maximum-likelihood AE with a fixed exponential schedule. On the rare joint tail its RMSE plateaued near 15% from about 2.6&nbsp;×&nbsp;10<sup>4</sup> calls, because the likelihood occasionally locked onto a wrong mode. IQAE [Grinko et al. 2021] chooses each next power <i>k</i> so that the current confidence interval for <i>θ</i> stays within one half-period, and it pools shots at repeated powers. We stop on the half-width of the amplitude interval rather than the angle interval, so small amplitudes are not over-resolved. With Clopper–Pearson intervals at <i>α</i>&nbsp;=&nbsp;0.05, empirical coverage is 0.95–1.00 in every cell we ran, and the error keeps falling: 3.6% at 8&nbsp;×&nbsp;10<sup>4</sup> calls and 2.0% at 2.0&nbsp;×&nbsp;10<sup>5</sup> calls on the rare tail.</p>
+
+<h3>2.3 Importance-weighted amplitude encoding</h3>
+<p>Equation (2) says a rare target is expensive because <i>a</i> is small. Classical importance sampling addresses the same issue by sampling from a proposal <i>q</i> that over-weights damaging years. We transfer it into the oracle. The loader prepares √<i>q</i>(<i>x</i>) and the objective rotation encodes the reweighted payoff:</p>
+<p class="eq">g(<i>x</i>) = <i>f</i>(<i>x</i>) <i>w</i>(<i>x</i>) / <i>W</i>,&nbsp;&nbsp; <i>w</i>(<i>x</i>) = Π<sub>y</sub> <i>p</i>(<i>s<sub>y</sub></i>) / <i>q</i>(<i>s<sub>y</sub></i>),&nbsp;&nbsp; <i>W</i> = max<sub><i>x</i></sub> <i>f</i>(<i>x</i>)<i>w</i>(<i>x</i>),&nbsp;&nbsp; <i>a</i>′ = E<sub><i>q</i></sub>[<i>g</i>] = <i>a</i>/<i>W</i> <span class="n">(3)</span></p>
+<p>The estimator is <i>â</i>&nbsp;=&nbsp;<i>W</i>&nbsp;<i>â</i>′. If the proposal concentrates on the paths where <i>f</i>&nbsp;&gt;&nbsp;0, then <i>W</i>&nbsp;&lt;&nbsp;1, the encoded amplitude is boosted, and the relative error per query improves by √(1/<i>W</i>). We use the brief's own proposal (half true, half loss-tilted, per year) and a loss<sup>2</sup>-tilted variant. In the circuit, the log-weight Σ<sub><i>y</i></sub>&nbsp;ln(<i>p</i>/<i>q</i>)(<i>s<sub>y</sub></i>) is accumulated in a fixed-point register through a per-year lookup and an adder. The final rotation is a uniformly-controlled RY over that register and a tail flag.</p>
+
+<div class="tblwrap">
+<div class="caption"><b>Table 2.</b> Exact per-query relative-error gain √(1/<i>W</i>) of IW-QAE over plain QAE, base scenario, grid-snapped proposals (δ&nbsp;=&nbsp;1/4, 6-bit log-weight register).</div>
+<table>
+<thead><tr><th>Proposal</th><th class="num">Expected loss</th><th class="num">Joint attachment</th><th class="num">Pr(<i>L</i>&gt;80m)</th><th class="num">Stop-loss</th><th class="num">Both exhausted</th></tr></thead>
+<tbody>
+<tr><td>Brief's proposal (½ true + ½ loss-tilted)</td><td class="num">2.41×</td><td class="num">0.97×</td><td class="num">1.82×</td><td class="num">2.49×</td><td class="num">2.64×</td></tr>
+<tr><td>Loss<sup>2</sup>-tilted (½ true + ½ loss<sup>2</sup>)</td><td class="num">1.53×</td><td class="num">0.54×</td><td class="num">2.13×</td><td class="num">3.98×</td><td class="num">3.99×</td></tr>
+</tbody></table>
+</div>
+
+<h3>2.4 Exact unbiasedness by grid-snapping</h3>
+<p>A fixed-point register can only hold rounded log-weights. Rounding ln(<i>p</i>/<i>q</i>) per state biases the estimate by roughly 1–3% at resolution δ&nbsp;=&nbsp;1/16, which is comparable to the accuracy we target. Instead of rounding the weights, we change the proposal so that its weights are exactly on the grid:</p>
+<p class="eq">ℓ̂(<i>s</i>) = δ · round( ln(<i>p</i>(<i>s</i>)/<i>q</i>(<i>s</i>)) / δ ),&nbsp;&nbsp;&nbsp; <i>q</i><sub>snap</sub>(<i>s</i>) = <i>p</i>(<i>s</i>) e<sup>−ℓ̂(<i>s</i>)</sup> / <i>Z</i> <span class="n">(4)</span></p>
+<p>Then ln(<i>p</i>/<i>q</i><sub>snap</sub>)&nbsp;=&nbsp;ℓ̂&nbsp;+&nbsp;ln&nbsp;<i>Z</i> exactly, the register holds the true weight, and the estimator is unbiased for any δ (verified to 10<sup>−13</sup> relative). <i>q</i><sub>snap</sub> is still a valid proposal and very close to <i>q</i>. A coarse grid (δ&nbsp;=&nbsp;1/4, six register qubits) keeps the full gain in Table 2.</p>
+
+<h3>2.5 What does not work, and why</h3>
+<p>Two natural variants failed, and the reason shaped the design. <b>Stratifying by which years pay</b> gives QAE essentially no gain (≈1.0× on every target), although the same stratification reduces the classical standard deviation 2–3×. <b>Weighting each year with its own ancilla</b>, which avoids weight arithmetic, loses the gain (≤0.5×): the per-year normaliser is set by the zero-loss state, whose weight exceeds one. The underlying asymmetry is that QAE's cost depends on the <i>worst-case</i> weight <i>W</i>, whereas classical importance sampling depends on the <i>second moment</i> of the weights. Only path-level weights with a tight <i>W</i> give a real quantum gain. This also means variance-reduction tricks do not transfer to QAE automatically. Each must be checked through its effect on <i>W</i>.</p>
+
+<h3>2.6 Benchmark design</h3>
+<p><b>Budgets.</b> Classical: 2<sup>10</sup>–2<sup>16</sup> sampled paths. Quantum: applications of <i>A</i>, with IQAE target precisions from 60% to 1% relative. <b>Repetitions.</b> 40 per classical cell and 200 per quantum cell; seed 2026. <b>Quantum emulation.</b> Quantum results are exact measurement statistics of ideal circuits: each shot is drawn from sin<sup>2</sup>((2<i>k</i>+1)<i>θ</i>) with the exact amplitude. That law is validated against an explicit 2<sup>21</sup>×2 statevector simulation of <i>Q</i><sup><i>k</i></sup><i>A</i>|0⟩ (maximum deviation 8.5&nbsp;×&nbsp;10<sup>−16</sup> for the plain encoding and 1.3&nbsp;×&nbsp;10<sup>−15</sup> for the weighted encoding). No hardware noise is included in the headline results.</p>
+
+<h3>2.7 Results</h3>
+<figure>
+  <img src="../../results/v2_error_vs_budget.png" alt="Relative RMSE versus budget for five targets and eight methods">
+  <figcaption><b>Figure 1.</b> Relative RMSE versus budget on <span class="mono">adb-base</span> for all five targets. Solid lines with circles are classical (paths); dashed lines with squares are quantum (oracle calls, ideal emulation). MLAE is our first prototype. Isolated RMSE spikes on quantum curves are the 1–2% of IQAE runs whose confidence interval missed; medians are smooth.</figcaption>
+</figure>
+
+<div class="tblwrap">
+<div class="caption"><b>Table 3.</b> Equal-budget comparison on the rare joint tail (both bonds exhausted), all five scenarios. IW-IQAE uses the brief's proposal, run to a 10% target; each classical method gets the same mean budget. Relative RMSE; best per row in green.</div>
+<table>
+<thead><tr><th>Scenario</th><th class="num">Exact</th><th class="num">Budget</th><th class="num">IW-IQAE</th><th class="num">Coverage</th><th class="num">MC</th><th class="num">Sobol</th><th class="num">Importance</th><th class="num">Stratified IS</th></tr></thead>
+<tbody>
+<tr><td class="mono">adb-base</td><td class="num">3.2e−5</td><td class="num">58,439</td><td class="num best">0.018</td><td class="num">0.99</td><td class="num">0.804</td><td class="num">1.003</td><td class="num">0.117</td><td class="num">0.217</td></tr>
+<tr><td class="mono">adb-independent</td><td class="num">3.9e−6</td><td class="num">222,714</td><td class="num best">0.017</td><td class="num">1.00</td><td class="num">1.084</td><td class="num">1.440</td><td class="num">0.149</td><td class="num">0.296</td></tr>
+<tr><td class="mono">adb-common-shock</td><td class="num">4.4e−5</td><td class="num">64,777</td><td class="num best">0.013</td><td class="num">1.00</td><td class="num">0.531</td><td class="num">0.674</td><td class="num">0.117</td><td class="num">0.191</td></tr>
+<tr><td class="mono">adb-rain-stress</td><td class="num">6.9e−5</td><td class="num">64,550</td><td class="num best">0.015</td><td class="num">0.99</td><td class="num">0.575</td><td class="num">0.611</td><td class="num">0.072</td><td class="num">0.148</td></tr>
+<tr><td class="mono">adb-rain-cover</td><td class="num">3.2e−5</td><td class="num">56,376</td><td class="num best">0.018</td><td class="num">1.00</td><td class="num">0.777</td><td class="num">0.920</td><td class="num">0.142</td><td class="num">0.209</td></tr>
+</tbody></table>
+</div>
+
+<div class="tblwrap">
+<div class="caption"><b>Table 4.</b> Equal-budget comparison, all targets, <span class="mono">adb-base</span>. Relative RMSE; best per row in green.</div>
+<table>
+<thead><tr><th>Target</th><th class="num">Budget</th><th class="num">IW-IQAE</th><th class="num">MC</th><th class="num">Sobol</th><th class="num">Importance</th><th class="num">Stratified IS</th><th>Best classical</th></tr></thead>
+<tbody>
+<tr><td>Both bonds exhausted</td><td class="num">58,439</td><td class="num best">0.018</td><td class="num">0.804</td><td class="num">1.003</td><td class="num">0.117</td><td class="num">0.217</td><td>Importance, 6.5× worse</td></tr>
+<tr><td>Stop-loss above US$80m</td><td class="num">6,553</td><td class="num best">0.019</td><td class="num">0.125</td><td class="num">0.138</td><td class="num">0.053</td><td class="num">0.039</td><td>Stratified IS, 2.1× worse</td></tr>
+<tr><td>Pr(<i>L</i>&nbsp;&gt;&nbsp;US$80m)</td><td class="num">5,544</td><td class="num best">0.017</td><td class="num">0.119</td><td class="num">0.127</td><td class="num">0.051</td><td class="num">0.045</td><td>Stratified IS, 2.6× worse</td></tr>
+<tr><td>Joint attachment</td><td class="num">5,827</td><td class="num best">0.022</td><td class="num">0.066</td><td class="num">0.045</td><td class="num">0.041</td><td class="num">0.028</td><td>Stratified IS, 1.3× worse</td></tr>
+<tr><td>Expected principal loss</td><td class="num">1,549</td><td class="num">0.022</td><td class="num">0.054</td><td class="num">0.015</td><td class="num">0.029</td><td class="num best">0.005</td><td>Stratified IS, 4.4× <i>better</i></td></tr>
+</tbody></table>
+</div>
+
+<div class="keybox">
+<div class="label">Honest reading</div>
+<ul>
+<li><b>Rare joint tail:</b> ideal IW-IQAE is 4–9× more accurate per query than the best classical method in all five scenarios, including <span class="mono">adb-independent</span> where the target is 3.9&nbsp;×&nbsp;10<sup>−6</sup>. This is where the brief locates the bottleneck.</li>
+<li><b>Tail expectations and exceedance:</b> 2–3× more accurate than the best classical method at equal budget.</li>
+<li><b>Smooth, common targets:</b> strong classical methods win or tie. Stratified importance sampling is 4.4× better on expected loss, and Sobol is competitive. We report this rather than hide it; it is also why our engine keeps a classical-first path (Section 5).</li>
+<li><b>Accounting:</b> a query is one application of <i>A</i>. The weighted oracle costs more gates per query than the plain one (Section 3), so per-query advantage is not wall-clock advantage. Per-gate parity requires the QROM lookup described in Section 3.4.</li>
+</ul>
+</div>
+
+<section id="scaling">
+<h3>2.8 Scaling to larger portfolios</h3>
+<p><b>The model generalises exactly.</b> Caps commute with sums: for non-negative steps, min(min(<i>x</i>,4)&nbsp;+&nbsp;<i>y</i>,&nbsp;4)&nbsp;=&nbsp;min(<i>x</i>&nbsp;+&nbsp;<i>y</i>,&nbsp;4). So each bond's capped three-year quake total is min(own&nbsp;+&nbsp;shared,&nbsp;4). Here "own" is compound Poisson over the term at rate 3(Λ<sub><i>i</i></sub>&nbsp;−&nbsp;<i>c</i>), and "shared" is the sum of <i>K</i>&nbsp;~&nbsp;Poisson(3<i>c</i>) independent size draws. The brief's precipitation law is exactly an own rate plus a shared rate. Conditional on one regional factor (<i>K</i>, shared-rain indicator), the countries are independent. This is the latent-factor structure of Egger et al. (2021), which the brief names as the closest analogue. At <i>n</i>&nbsp;=&nbsp;2 the generalised model reproduces all five targets in all five scenarios to 5×10<sup>−14</sup> relative. For larger <i>n</i>, synthetic portfolios clone the Kyrgyz and Tajik parameters alternately (<code>jointloss/scaling.py</code>, <code>run_scaling.py</code>).</p>
+<p><b>The quantum oracle grows linearly.</b> Only term totals enter the targets, so the oracle loads the term law directly. It has a latent register (3 qubits for <i>K</i>&nbsp;≤&nbsp;4, 1 shared-rain qubit), then for each country a <i>K</i>-multiplexed 3-qubit loader and an own-rain qubit, and finally a multi-controlled payoff. Built and transpiled in Qiskit, and verified by full statevector simulation at <i>n</i>&nbsp;=&nbsp;2 and 3 (agreement to 10<sup>−13</sup>), it uses <b>exactly 4<i>n</i>&nbsp;+&nbsp;7 qubits and 70.0<i>n</i>&nbsp;+&nbsp;0.6 CX</b> (largest residual 1.5). At <i>n</i>&nbsp;=&nbsp;2 this is 142 CX, against 850 for the annual-level oracle of Section&nbsp;3.</p>
+<div class="tblwrap">
+<div class="caption"><b>Table 5.</b> Scaling of the "all <i>n</i> bonds exhausted" target with portfolio size (exact probabilities by conditional calculation). Budgets for 10% relative error: Monte Carlo (1−<i>a</i>)/(0.01<i>a</i>) samples; IQAE calls calibrated by emulation on the exact amplitude. Oracle columns are built and transpiled circuits.</div>
+<table>
+<thead><tr><th class="num"><i>n</i></th><th class="num">Annual states</th><th class="num"><i>a</i> = P(all exhausted)</th><th class="num">MC samples</th><th class="num">IQAE calls</th><th class="num">MC / IQAE</th><th class="num">Qubits</th><th class="num">CX(<i>A</i>)</th><th class="num">CX(<i>Q</i>)</th></tr></thead>
+<tbody>
+<tr><td class="num">2</td><td class="num">10<sup>2</sup></td><td class="num">3.16e−5</td><td class="num">3.2e6</td><td class="num">2.6e4</td><td class="num">123×</td><td class="num">15</td><td class="num">142</td><td class="num">1,012</td></tr>
+<tr><td class="num">3</td><td class="num">10<sup>3</sup></td><td class="num">5.25e−6</td><td class="num">1.9e7</td><td class="num">6.8e4</td><td class="num">280×</td><td class="num">19</td><td class="num">210</td><td class="num">1,648</td></tr>
+<tr><td class="num">5</td><td class="num">10<sup>5</sup></td><td class="num">5.42e−7</td><td class="num">1.8e8</td><td class="num">2.2e5</td><td class="num">829×</td><td class="num">27</td><td class="num">350</td><td class="num">3,304</td></tr>
+<tr><td class="num">8</td><td class="num">10<sup>8</sup></td><td class="num">3.62e−8</td><td class="num">2.8e9</td><td class="num">7.6e5</td><td class="num">3,645×</td><td class="num">39</td><td class="num">560</td><td class="num">5,918</td></tr>
+<tr><td class="num">10</td><td class="num">10<sup>10</sup></td><td class="num">1.16e−8</td><td class="num">8.6e9</td><td class="num">1.4e6</td><td class="num">6,067×</td><td class="num">47</td><td class="num">700</td><td class="num">7,236</td></tr>
+<tr><td class="num">20</td><td class="num">10<sup>20</sup></td><td class="num">3.22e−10</td><td class="num">3.1e11</td><td class="num">8.5e6</td><td class="num best">36,787×</td><td class="num">87</td><td class="num">1,400</td><td class="num">13,776</td></tr>
+</tbody></table>
+</div>
+<figure>
+  <img src="../../results/scaling.png" alt="Joint-tail probabilities, budgets, qubits and CX versus number of countries">
+  <figcaption><b>Figure 2.</b> Scaling with portfolio size <i>n</i> (single regional factor). Top left: exact joint-tail probabilities. Top right: budget for 10% relative error on "all <i>n</i> exhausted", Monte Carlo versus emulated IQAE. Bottom: logical qubits (4<i>n</i>&nbsp;+&nbsp;7) and CX counts of the built oracle <i>A</i> and Grover operator <i>Q</i>.</figcaption>
+</figure>
+<p><b>Rarer tails favour QAE.</b> P(all bonds exhausted) falls from 3.2×10<sup>−5</sup> at <i>n</i>&nbsp;=&nbsp;2 to 3.2×10<sup>−10</sup> at <i>n</i>&nbsp;=&nbsp;20. Monte Carlo then needs 3.1×10<sup>11</sup> samples for 10% error, against 8.5×10<sup>6</sup> IQAE oracle calls: about 37,000× fewer, and the gap widens as the tail gets rarer. The comparison depends on the target. P(at least two bonds exhausted) <i>rises</i> with <i>n</i> (3.2×10<sup>−5</sup> to 2.7×10<sup>−3</sup>), so its ratio falls to about 12×. P(portfolio loss&nbsp;&gt;&nbsp;40<i>n</i>) plateaus near 0.5% instead of diversifying away, because one shared earthquake moves the whole portfolio. That is a quantitative case for joint-tail modelling in pooled products.</p>
+<p><b>An honest boundary.</b> For one regional factor, an exact classical conditional calculation is also polynomial. We use it as the ground truth that makes benchmarking at large <i>n</i> possible; it is not a quantum result. The quantum oracle exploits the same structure, so its cost grows linearly in <i>n</i> and in the number of latent-factor qubits. With many factors, heterogeneous pairwise links or data-driven copulas, exact classical calculation becomes exponential in the number of coupled factors and sampling is the remaining option. That is where QAE's 1/√<i>a</i> versus Monte Carlo's 1/<i>a</i> matters, because joint-tail amplitudes shrink with portfolio size. Importance weighting adds a further 2.6–4× on the rare tail at <i>n</i>&nbsp;=&nbsp;2. Extending its weight bound to <i>n</i> countries, and tensor-network exact references for moderate-treewidth dependence, are Phase 2 work. One oracle circuit (<i>k</i>&nbsp;=&nbsp;0) fits a near-term fidelity budget up to <i>n</i>&nbsp;≈&nbsp;8, but Grover iterations do not, so the advantage remains a fault-tolerant proposition.</p>
+</section>
+
+<!-- ======================================================================= -->
+<h2>3. Resource Estimation</h2>
+
+<h3>3.1 Oracle construction</h3>
+<p><b>Plain oracle <i>A</i>.</b> For each of three years: a 6-qubit loader for the joint quake state (<i>a</i>,&nbsp;<i>b</i>) and a 2-qubit loader for the precipitation pair (Qiskit <code>StatePreparation</code>). Then two 4-bit Cuccaro ripple-carry accumulators [Cuccaro et al. 2004] sum the quake quarter-steps (uncapped sum ≤&nbsp;12), OR gates combine the precipitation triggers, and cap flags <i>g</i><sub>A</sub>&nbsp;=&nbsp;(<i>S</i><sub>A</sub>&nbsp;≥&nbsp;4) are taken from the two high bits. Finally, one uniformly-controlled RY on the objective qubit, controlled by eight qubits (cap flags, low sum bits, precipitation bits; 256 angles), encodes <i>f</i>. The same circuit serves all five targets; only the angles change.</p>
+<p><b>Weighted oracle <i>A</i><sub>IW</sub></b> (rare-tail target). It uses the grid-snapped proposal loader on the 8-qubit year register, plus a per-year lookup of the integer log-weight (5 output bits, computed then uncomputed) added into a 6-bit register with a Cuccaro adder. It reuses the same arithmetic. A tail flag (AND of four flags) and a uniformly-controlled RY over the 6-bit register and the flag (128 angles) complete it.</p>
+
+<h3>3.2 Verification before costing</h3>
+<ul>
+<li>The plain oracle's reversible arithmetic was bit-simulated on <b>all 10<sup>6</sup> three-year paths</b>. Its output reproduces the model's capped term state exactly, ancillas return to |0⟩, and inputs are preserved.</li>
+<li>Loaders, lookup bits and final rotations were checked on exact small operators. The amplitude implied by the verified circuit equals the exact target: <b>3.1633&nbsp;×&nbsp;10<sup>−5</sup></b> (plain) and <b>5.0234&nbsp;×&nbsp;10<sup>−4</sup></b> (weighted, encoded; <i>W</i>&nbsp;=&nbsp;0.0630).</li>
+</ul>
+
+<h3>3.3 Gate counts</h3>
+<div class="tblwrap">
+<div class="caption"><b>Table 6.</b> Logical resources per oracle, transpiled with Qiskit 2.6.2 (optimisation level 1) to {CX, RZ, SX, X}, all-to-all connectivity unless stated.</div>
+<table>
+<thead><tr><th>Circuit</th><th class="num">Logical qubits</th><th class="num">CX</th><th class="num">1-qubit gates</th><th class="num">Depth</th><th class="num">CX depth</th></tr></thead>
+<tbody>
+<tr><td><i>A</i>, plain</td><td class="num">39</td><td class="num">850</td><td class="num">1,399</td><td class="num">1,235</td><td class="num">623</td></tr>
+<tr><td><i>Q</i>, plain (Grover operator)</td><td class="num">39</td><td class="num">6,494</td><td class="num">9,987</td><td class="num">10,915</td><td class="num">4,993</td></tr>
+<tr><td><i>A</i>, importance-weighted</td><td class="num">52</td><td class="num">24,545</td><td class="num">45,481</td><td class="num">47,199</td><td class="num">16,293</td></tr>
+<tr><td><i>Q</i>, importance-weighted</td><td class="num">52</td><td class="num">55,288</td><td class="num">98,755</td><td class="num">105,078</td><td class="num">38,047</td></tr>
+<tr><td><i>A</i>, plain, routed to IBM heavy-hex (57 qubits)</td><td class="num">39</td><td class="num">2,293</td><td class="num">1,399</td><td class="num">1,903</td><td class="num">1,233</td></tr>
+</tbody></table>
+</div>
+<p class="small">Two observations guide Phase 2. <i>Q</i> costs 7.6× <i>A</i> because the 39-qubit zero-reflection is synthesised without ancillas; an ancilla-assisted multi-controlled Z should remove most of this. In the weighted oracle, the log-weight lookups are Qiskit multiplexers built from small-angle rotations, and they dominate its cost.</p>
+
+<h3>3.4 Run-level totals at about 2% relative error on the rare tail</h3>
+<div class="tblwrap">
+<div class="caption"><b>Table 7.</b> End-to-end resources to estimate Pr(both exhausted) to about 2% relative RMSE (from the emulated IQAE runs, 100 shots per round). T-counts use Ross–Selinger rotation synthesis with a total synthesis error of 10<sup>−2</sup>. Surface-code distance assumes physical error 10<sup>−3</sup>; magic-state factories are excluded.</div>
+<table>
+<thead><tr><th>Quantity</th><th class="num">Plain IQAE</th><th class="num">IW-IQAE (loss<sup>2</sup> proposal)</th></tr></thead>
+<tbody>
+<tr><td>Relative RMSE achieved</td><td class="num">2.0%</td><td class="num">1.4%</td></tr>
+<tr><td>Oracle calls (applications of <i>A</i>)</td><td class="num">2.04 × 10<sup>5</sup></td><td class="num best">6.34 × 10<sup>4</sup></td></tr>
+<tr><td>Largest Grover power <i>k</i></td><td class="num">1,331</td><td class="num best">334</td></tr>
+<tr><td>Shots</td><td class="num">100 per round</td><td class="num">100 per round</td></tr>
+<tr><td>T-count per <i>Q</i>, as built</td><td class="num">4.1 × 10<sup>4</sup></td><td class="num">2.6 × 10<sup>6</sup></td></tr>
+<tr><td>T-count total, as built</td><td class="num">4.2 × 10<sup>9</sup></td><td class="num">8.2 × 10<sup>10</sup></td></tr>
+<tr><td>T-count total with unary-iteration QROM (projection)</td><td class="num">4.2 × 10<sup>9</sup></td><td class="num best">4.1 × 10<sup>9</sup></td></tr>
+<tr><td>Surface-code distance; physical data qubits</td><td class="num">19; ≈ 28,000</td><td class="num">21; ≈ 46,000</td></tr>
+</tbody></table>
+</div>
+<p><b>The lookup is the lever.</b> Replacing the rotation-based lookups with a unary-iteration QROM [Babbush et al. 2018] costs 4(<i>N</i>−1) T gates per lookup with no rotations (<i>N</i>&nbsp;=&nbsp;256). That brings IW-IQAE to 4.1&nbsp;×&nbsp;10<sup>9</sup> T at 1.4% error, against 4.2&nbsp;×&nbsp;10<sup>9</sup> T at 2.0% for plain QAE. The result is per-gate parity with higher accuracy, 3.2× fewer queries and a 4× shorter maximal coherent sequence. This figure is a projection; building it is the first Phase 2 milestone.</p>
+
+<h3>3.5 Near-term feasibility and error mitigation</h3>
+<p>At a two-qubit error rate of 10<sup>−3</sup>, keeping the expected circuit fidelity above 0.5 allows about 690 CX gates. The plain <i>A</i> alone needs 850, so <b>no Grover iteration of this oracle is feasible on current NISQ hardware</b>. The advantage reported here is a fault-tolerant proposition, consistent with resource studies for derivative pricing [Chakrabarti et al. 2021]. For the small-<i>k</i> hardware demonstrations planned in Phase 2 (reduced instances, <i>k</i>&nbsp;∈&nbsp;{0,&nbsp;1,&nbsp;2}), we will use readout-error mitigation, zero-noise extrapolation on <i>k</i>, a noise-aware likelihood (the contrast-decay model already in our MLAE code, exp(−κ(2<i>k</i>+1))) or a noise-robust IQAE variant, and dynamical decoupling on idle qubits.</p>
+
+<h3>3.6 Hardware modality</h3>
+<p>Routing the plain oracle onto IBM heavy-hex connectivity raises the CX count 2.7× (850 to 2,293). All-to-all connectivity is therefore preferred for near-term demonstrations: trapped ions, or neutral atoms with movable qubits. The fault-tolerant target is a surface-code machine (superconducting or neutral-atom) with magic-state distillation. Full layout and factory overheads will be computed with a dedicated estimator (Qualtran or Azure Quantum Resource Estimator) in Phase 2.</p>
+
+<h3>3.7 Classical compute used and Phase 2 plan</h3>
+<p>All Phase 1 results ran on a single CPU core: the classical baselines and IQAE emulation take a few minutes (<code>run_benchmarks_v2.py</code>), and circuit construction, verification and costing take about one minute (<code>resources/build_circuits.py</code>). Environment: Python 3.13, NumPy, SciPy, Qiskit 2.6.2, fixed seed 2026. In Phase 2 the QAI Ventures GPU credits will be used for GPU statevector and tensor-network simulation of reduced-but-nontrivial instances (30–40 qubits), noisy simulation of small-<i>k</i> circuits, and large-<i>n</i> classical references.</p>
+
+<!-- ======================================================================= -->
+<h2>4. Work Plan</h2>
+<p>Phase 2 runs from 30 November 2026 to 22 January 2027, with final pitches on 25 January 2027. The plan moves from the verified two-country oracle to larger portfolios and realistic data, keeping a classical reference beside every quantum result.</p>
+<div class="tblwrap">
+<div class="caption"><b>Table 8.</b> Phase 2 milestones.</div>
+<table>
+<thead><tr><th style="width:15%">Weeks</th><th style="width:38%">Work</th><th>Output and success criterion</th></tr></thead>
+<tbody>
+<tr><td>1–2<br><span class="muted">30 Nov – 13 Dec</span></td><td>Build unary-iteration QROM lookups and an ancilla-assisted reflection; re-cost both oracles with Qualtran or Azure Resource Estimator (including factories).</td><td>Verified circuits; measured T-count per <i>Q</i> within 20% of the projection; full physical-qubit and runtime estimate.</td></tr>
+<tr><td>2–3</td><td>IW encoding for expectation targets (payoff inside the final rotation); per-target choice of proposal; IQAE at α&nbsp;=&nbsp;0.01.</td><td>Gains and unbiasedness verified on all five targets and five scenarios.</td></tr>
+<tr><td>3–5<br><span class="muted">GPU</span></td><td>Scaling: <i>n</i>-country factor loader (<i>n</i>&nbsp;=&nbsp;3…10), conditional-DP exact references, tensor-train references for multi-factor dependence; GPU statevector runs of reduced instances.</td><td>Qubit and gate counts versus <i>n</i>; accuracy-per-query curves at <i>n</i>&nbsp;≥&nbsp;5; crossover map against the best classical method.</td></tr>
+<tr><td>5–6</td><td>Second worked example: World Bank Central Asia event-loss tables (seismic, flood); data-driven loaders.</td><td>Reference values reproduced; quantum and classical estimates on the event-loss-table cases.</td></tr>
+<tr><td>6–7</td><td>Noisy simulation and a small-<i>k</i> hardware demonstration (trapped-ion access if available) with the mitigation stack of Section 3.5.</td><td>Mitigated estimates with error bars on a reduced instance; documented noise budget.</td></tr>
+<tr><td>7–8<br><span class="muted">to 22 Jan</span></td><td>Packaging: documented library and API, reproducibility scripts, final report, business case, demo.</td><td>Final report, codebase documentation and demo, per the brief.</td></tr>
+</tbody></table>
+</div>
+
+<div class="tblwrap">
+<div class="caption"><b>Table 9.</b> Mapping to the brief's Phase 2 deliverables.</div>
+<table>
+<thead><tr><th>Brief deliverable</th><th>How we meet it</th></tr></thead>
+<tbody>
+<tr><td>Working prototype</td><td>Library that takes model or event-loss-table inputs and returns all targets with confidence intervals, via classical, quantum-inspired and (emulated or hardware) quantum engines.</td></tr>
+<tr><td>Technical documentation</td><td>Method, encoding proofs (unbiasedness, gain √(1/<i>W</i>)), verification logs, benchmark protocol, resource estimates.</td></tr>
+<tr><td>Classical bottleneck analysis</td><td>Accuracy at fixed budget on the rare joint tail versus portfolio size, against six classical baselines including stratified IS and tensor networks.</td></tr>
+<tr><td>Business case</td><td>Section 5, refined with feedback from ADB and pool practitioners.</td></tr>
+</tbody></table>
+</div>
+
+<div class="tblwrap">
+<div class="caption"><b>Table 10.</b> Risks and mitigations.</div>
+<table>
+<thead><tr><th style="width:32%">Risk</th><th>Mitigation</th></tr></thead>
+<tbody>
+<tr><td>QROM build does not reach the projected T-count</td><td>Fallback to plain IQAE, which already beats every classical baseline on the rare tail per query; report both.</td></tr>
+<tr><td>Weight bound <i>W</i> loosens for larger portfolios or new proposals</td><td>Compute <i>W</i> by max-product dynamic programming over the factor structure; choose proposals by their effect on <i>W</i>, not on classical variance (Section 2.5).</td></tr>
+<tr><td>No hardware access, or noise too high for any useful <i>k</i></td><td>Present calibrated noisy simulation and resource estimates; the claim remains fault-tolerant, as stated in Section 3.5.</td></tr>
+<tr><td>Stronger classical methods close the gap</td><td>Keep them in the benchmark (we added two); report crossover honestly; the library ships the classical engine regardless.</td></tr>
+<tr><td>Event-loss-table data larger than expected</td><td>Aggregate to the payout grid first; tensor-train compression; GPU credits.</td></tr>
+</tbody></table>
+</div>
+
+<!-- ======================================================================= -->
+<h2>5. Commercialization &amp; Impact Considerations</h2>
+
+<h3>5.1 Who needs this, and why</h3>
+<p>Multilateral development banks are expanding catastrophe risk products. ADB issued its first Disaster Relief Bonds in 2026: US$160m for the Kyrgyz Republic and Tajikistan, inside a risk-layered programme alongside contingent disaster financing. The World Bank continues single-country cat bonds. Regional parametric pools (CCRIF, ARC, PCRIC, SEADRIF) cover a growing number of countries, and in 2026 they began exploring a joint reinsurance platform. Each of these decisions depends on joint tails: how much capital a pool saves, how a multi-country or multi-peril bond should be layered, and whether triggers pay when compound events occur. Today these numbers come from proprietary models with limited transparency about dependence.</p>
+
+<h3>5.2 Product</h3>
+<p>An open, benchmarked <b>joint-tail risk engine</b> (Python library and API). It takes either a parametric model of the benchmark type or event-loss tables, and returns portfolio targets with confidence intervals. It runs on three back ends behind one interface: (i) a classical-first engine (stratified importance sampling, conditional dynamic programming) that is useful today; (ii) a quantum-inspired tensor-network engine for larger dependence structures; and (iii) a quantum engine (IW-IQAE) with verified circuits and resource estimates, ready to run as fault-tolerant hardware matures. The published benchmark and crossover analysis are part of the product. They tell a user which engine wins for which target, rather than assuming quantum always does.</p>
+
+<h3>5.3 Users and route to market</h3>
+<ul>
+<li><b>MDB treasury and risk teams</b> (ADB, World Bank): independent checks of joint-tail assumptions behind new multi-country or multi-peril issuances; structuring pooled facilities.</li>
+<li><b>Regional risk pools and the proposed pool-of-pools</b>: capital and reinsurance sizing where cross-basin dependence (for example through El Niño) is central.</li>
+<li><b>Reinsurers, insurance-linked-securities funds and catastrophe-model vendors</b>: tail pricing and validation, delivered as a licensed engine or an integration.</li>
+</ul>
+<p>The route is open-source core plus paid integration and support, starting with one MDB pilot and one regional pool. The classical engine creates value immediately. The quantum engine is positioned as a validated, ready-to-run option whose commercial advantage depends on fault-tolerant hardware, which we state plainly.</p>
+
+<h3>5.4 Development impact</h3>
+<p>Tighter, transparent joint-tail estimates let pools and bond structures be sized with confidence. The same premium then buys more cover, and payouts are less likely to fail when compound or cross-border events strike. This supports ADB Operational Priority 3 (climate and disaster resilience) and Operational Priority 7 (regional cooperation, through pooled cross-border risk transfer). It also reduces reliance on post-disaster borrowing and budget reallocation in countries with limited fiscal buffers.</p>
+
+<h3>5.5 Other fields</h3>
+<p>The method applies wherever a portfolio target depends on rare joint events driven by shared factors: credit-portfolio default risk (the setting of Egger et al. 2021), operational-risk capital, energy-grid reliability under correlated outages, supply-chain disruption, and pandemic or climate stress testing of public finances.</p>
+
+<!-- ======================================================================= -->
+<h2>References</h2>
+<ol class="refs">
+<li>Asian Development Bank. <i>Quantum Approaches to Joint-Loss Modelling for Natural Catastrophe Risk: Challenge Description</i>, 2026. ADB news release on the inaugural Disaster Relief Bonds (earthquake and extreme precipitation), May 2026.</li>
+<li>Brassard, G., Høyer, P., Mosca, M., Tapp, A. Quantum amplitude amplification and estimation. <i>Contemporary Mathematics</i> 305, 2002.</li>
+<li>Montanaro, A. Quantum speedup of Monte Carlo methods. <i>Proc. R. Soc. A</i> 471, 2015.</li>
+<li>Woerner, S., Egger, D. J. Quantum risk analysis. <i>npj Quantum Information</i> 5, 15, 2019.</li>
+<li>Egger, D. J., García Gutiérrez, R., Cahué Mestre, J., Woerner, S. Credit risk analysis using quantum computers. <i>IEEE Transactions on Computers</i> 70(12), 2021.</li>
+<li>Suzuki, Y., et al. Amplitude estimation without phase estimation. <i>Quantum Information Processing</i> 19, 75, 2020.</li>
+<li>Grinko, D., Gacon, J., Zoufal, C., Woerner, S. Iterative quantum amplitude estimation. <i>npj Quantum Information</i> 7, 52, 2021.</li>
+<li>Chakrabarti, S., et al. A threshold for quantum advantage in derivative pricing. <i>Quantum</i> 5, 463, 2021.</li>
+<li>Herman, D., et al. Quantum computing for finance. <i>Nature Reviews Physics</i> 5, 450, 2023.</li>
+<li>Babbush, R., et al. Encoding electronic spectra in quantum circuits with linear T complexity. <i>Physical Review X</i> 8, 041015, 2018.</li>
+<li>Babbush, R., et al. Focus beyond quadratic speedups for error-corrected quantum advantage. <i>PRX Quantum</i> 2, 010103, 2021.</li>
+<li>Cuccaro, S. A., Draper, T. G., Kutin, S. A., Moulton, D. P. A new quantum ripple-carry addition circuit. arXiv:quant-ph/0410184, 2004.</li>
+<li>Ross, N. J., Selinger, P. Optimal ancilla-free Clifford+T approximation of z-rotations. <i>Quantum Information &amp; Computation</i> 16, 2016.</li>
+<li>Fowler, A. G., Mariantoni, M., Martinis, J. M., Cleland, A. N. Surface codes: towards practical large-scale quantum computation. <i>Physical Review A</i> 86, 032324, 2012.</li>
+<li>Herbert, S. No quantum speedup with Grover–Rudolph state preparation for quantum Monte Carlo integration. <i>Physical Review E</i> 103, 063302, 2021.</li>
+<li>Glasserman, P. <i>Monte Carlo Methods in Financial Engineering</i>. Springer, 2003.</li>
+<li>Owen, A. B. Scrambled net variance for integrals of smooth functions. <i>Annals of Statistics</i> 25(4), 1997.</li>
+<li>Embrechts, P., Klüppelberg, C., Mikosch, T. <i>Modelling Extremal Events for Insurance and Finance</i>. Springer, 1997.</li>
+<li>Joe, H. <i>Dependence Modeling with Copulas</i>. CRC Press, 2014.</li>
+<li>Orús, R. A practical introduction to tensor networks. <i>Annals of Physics</i> 349, 117, 2014.</li>
+</ol>
+
+<h2>AI-Use Disclosure</h2>
+<p>The prototype code, benchmark harness, documentation and this proposal were drafted with the assistance of Claude (Anthropic). The authors directed the work, reviewed the methods, and verified the code and results; all numerical results are reproducible from the public repository with the stated seed and environment. Model equations and benchmark definitions are taken from the ADB challenge brief.</p>
+
+</body>
+</html>

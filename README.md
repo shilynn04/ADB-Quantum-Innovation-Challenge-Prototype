@@ -1,65 +1,99 @@
-# ADB Quantum Challenge - Phase 1 lightweight prototype
-Joint-loss modelling for the Kyrgyz Republic / Tajikistan disaster-relief-bond benchmark.
+# Qubit Happens: importance-weighted amplitude estimation for the rare joint tail
 
-> **Status: Phase 1 prototype.** Everything below is simulation on a laptop CPU. No quantum hardware was used.
-> Quantum results are *ideal-circuit simulations* (plus an illustrative noise model) - not hardware measurements.
+**ADB Quantum Innovation Challenge 2026, Phase 1 lightweight prototype** · Team **Qubit Happens** (ID 6746):
+Ivan Cheong, Tan Boon Xuan, Loh Shi Lynn
 
-## What this repo does
-| Module | Purpose |
+Joint-loss modelling for the Kyrgyz Republic / Tajikistan Disaster Relief Bond benchmark defined in the
+challenge brief (two bonds of USD 80m, earthquake and precipitation sub-limits, 3-year term, 5 targets,
+5 scenarios).
+
+> **Status.** Everything here runs on a CPU. **No quantum hardware was used.** Quantum results are the
+> exact measurement statistics of *ideal* circuits (the `sin²((2k+1)θ)` law, validated against a full
+> statevector simulation), and costs are counted in oracle queries, not wall-clock time.
+
+## Headline results
+
+* The exact reference model **reproduces all 25 values of the brief's Table 5**.
+* **Iterative QAE** removes the ~15% error plateau of fixed-schedule MLAE and returns confidence
+  intervals (empirical coverage 0.95-1.00).
+* **Importance-weighted IQAE** (grid-snapped proposal, exactly unbiased): on the rare joint tail
+  ("both bonds exhausted", about 3 in 100,000), relative error is **1.3-1.8% versus 7.2-14.9% for the
+  best classical method at equal budget, in all five scenarios** (4-9× more accurate).
+* **Where classical still wins:** on expected loss, stratified importance sampling (a stronger
+  classical baseline we added) is about 4× more accurate than QAE. We report this.
+* **Gate-level resource estimate.** The oracles are built and verified in Qiskit. Plain oracle A: 39
+  logical qubits and 850 CX. Grover operator: 6,494 CX. Also reported: T-counts, surface-code
+  distance, NISQ feasibility, error mitigation and hardware mapping.
+* **Scaling argument** for larger portfolios: see [docs/SCALING.md](docs/SCALING.md).
+
+![error versus budget, all five targets](results/v2_error_vs_budget.png)
+
+## Repository structure
+
+| Path | Purpose |
 |---|---|
-| `jointloss/model.py` | Exact reference model (brief steps 1-8): compound-Poisson earthquake CTMC with shared events, correlated precipitation, 100-state annual law, 3-year capped convolution, 5 focus targets, 5 scenarios. **Reproduces every value in the brief's Table 5.** |
-| `jointloss/baselines.py` | Classical baselines from step 9: Monte Carlo, scrambled Sobol (8 scrambles), stratified (first-payout-year), importance sampling (½ true + ½ loss-tilted). |
-| `jointloss/qae.py` | Amplitude-estimation engine: payoff oracle over all 10^6 three-year paths, an explicit 2^21x2 **statevector simulation** of Grover iterates `Q^k A|0>` (matches `sin²((2k+1)θ)` to 1e-15), and a maximum-likelihood AE (MLAE) estimator with binomial shot noise and an optional per-call contrast-decay noise model. |
-| `run_benchmarks.py` | Runs everything -> `results/results.json`. `make_plots.py` -> `results/error_vs_budget.png`. |
+| `jointloss/model.py` | Exact reference model (brief steps 1-8): compound-Poisson earthquake CTMC with shared events, correlated precipitation, 100-state annual law, 3-year capped convolution, 5 targets, 5 scenarios |
+| `jointloss/baselines.py` | The brief's classical baselines (step 9): Monte Carlo, scrambled Sobol, stratified, importance sampling |
+| `jointloss/qae.py` | QAE payoff over all 10⁶ three-year paths, explicit statevector check of `Q^k A\|0>`, MLAE estimator (v1) |
+| `jointloss/iqae.py` | Iterative QAE (Grinko et al. 2021) emulated at the level of measurement statistics |
+| `jointloss/weighted.py` | Importance-weighted amplitude encoding with a grid-snapped (exactly unbiased) proposal |
+| `jointloss/scaling.py`, `run_scaling.py` | n-country generalisation, exact large-n references, query and gate scaling |
+| `resources/build_circuits.py` | Builds and **verifies** the oracles in Qiskit, then counts qubits, CX, depth, T-gates |
+| `run_benchmarks.py`, `make_plots.py` | v1 benchmark (MLAE vs the brief's baselines) → `results/results.json`, `results/error_vs_budget.png` |
+| `run_benchmarks_v2.py`, `make_plots_v2.py` | v2 benchmark (IQAE, IW-IQAE, stronger classical baselines, all scenarios) → `results/v2_results.json`, `results/v2_error_vs_budget.png` |
+| `docs/V2_NOTES.md` | Methods, results and resource estimate in detail |
+| `docs/SCALING.md` | Scaling to larger portfolios |
+| `submission/` | Technical proposal PDF and presentation deck (with their source) |
 
-## Reproduce
+## Setup and execution
+
 ```bash
-pip install -r requirements.txt
-python run_benchmarks.py 40     # 40 repetitions, seed 2026, ~1 min on one CPU core
+python -m venv .venv && source .venv/bin/activate      # optional
+pip install -r requirements.txt                          # numpy, scipy, matplotlib, qiskit
+python run_benchmarks.py 40          # v1 benchmark            (~1 min)
 python make_plots.py
+python run_benchmarks_v2.py 40       # v2 benchmark            (a few minutes)
+python make_plots_v2.py
+python -m resources.build_circuits   # verify + cost circuits  (~1 min)
+python run_scaling.py                # scaling study           (a few minutes)
 ```
 
-## Results (adb-base unless stated; relative error vs exact, 40-80 repetitions)
-Budget is "paths" for classical methods and "applications of the state-preparation oracle A" for QAE
-(one QAE shot at Grover power k costs 2k+1 applications of A).
+All scripts use the fixed seed 2026 and write to `results/`. Outputs committed in `results/` are the
+ones reported in the proposal (`results/run.log` and `results/v2_run.log` are the execution logs).
 
-Rare target `both_exhausted` (exact 3.2e-5), RMSE / median relative error:
+## Hardware and simulator details
 
-| Budget | MC | Sobol | Stratified | Importance | QAE (ideal, MLAE) |
-|---|---|---|---|---|---|
-| ~3.3e4 paths / 2.6e4 calls | 1.06 / 0.97 | 1.00 / 0.48 | 0.48 / 0.39 | 0.20 / 0.15 | 0.15 / 0.09 |
-| 6.6e4 paths / 5.2e4 calls | 0.69 / 0.52 | 0.64 / 0.52 | 0.32 / 0.27 | 0.12 / 0.08 | 0.14 / 0.03 |
+* **Hardware:** CPU only, no GPU and no quantum processor. v1 results were produced on a laptop CPU
+  (1 core). v2, the resource estimate and the scaling study were produced on an Intel Xeon @ 2.10 GHz
+  (4 vCPU, single-threaded runs).
+* **Software as run:**
+  * v1: Python 3.12.3, NumPy 2.5.4, SciPy 1.18.1, Matplotlib 3.11.2.
+  * v2: Python 3.13.18, NumPy 2.5.3, SciPy 1.18.1, Matplotlib 3.11.2, Qiskit 2.6.2.
+* **Simulators:**
+  * Our own NumPy statevector check (2²¹×2 amplitudes) of the Grover iterates.
+  * Measurement-statistics emulation of MLAE and IQAE.
+  * Qiskit transpiler for gate counts (basis `cx, rz, sx, x`; heavy-hex coupling via `GenericBackendV2`).
+  * A bit-level simulator that checks the reversible arithmetic on all 10⁶ paths.
 
-Smooth targets (e.g. expected loss, `Pr(L>80m)`): QAE error falls roughly ∝ 1/calls (≈0.09 -> 0.002 between 450 and 2.6e4 calls), versus ∝ 1/√N for MC; scrambled Sobol is already about as accurate as ideal QAE on expected loss (0.001 at 3.3e4 paths).
+## Version history in this repo
 
-### Honest reading
-* Importance sampling is a **strong classical baseline** on the rare joint tail; ideal QAE only edges it (≈1.3× lower RMSE at ~2.6e4 calls, mixed at 5e4) and its RMSE plateaus around 0.15 because MLAE with a fixed schedule sometimes aliases to a wrong mode, even while its *median* error keeps shrinking.
-* A QAE "oracle call" (load three annual states + capped-sum + payoff) is far more expensive than a classical path evaluation, so equal-count comparisons favour QAE. This is a query-complexity comparison, **not** a wall-clock or hardware claim.
-* Illustrative noise (`κ=1e-3` contrast decay per oracle call, an assumption, not measured) leaves the exhaustion RMSE essentially unchanged (≈0.15-0.18) and erodes the median improvement at the deepest circuits.
-* The 2-country benchmark is small: exact enumeration takes ~0.2 ms, so this prototype validates *methodology and accounting*, not practical advantage. The scaling claim (10^n states) needs the Phase 2 work below.
-
-## Resource estimate (ADB 2-country, 3-year term, coarse)
-* Annual-state register: 100 states -> 7 qubits; three years -> 21 qubits (product-state loading, 3 × a 7-qubit loader)
-* Running capped total (a,b ≤4; r1,r2 ≤1): 3+3+1+1 = 8 qubits; payoff/comparator ancillas ≈ 6; objective qubit 1 -> **≈ 36 qubits** (target: gate-based, fault-tolerant; statevector-simulable on a laptop up to ~21 qubits in `qae.py`)
-* Deepest MLAE run in the sweep: k = 2^9 -> Grover power 512, ~1.0e5 A-applications total. Gate counts per A not yet compiled (Phase 2: Qiskit/Cirq transpile for 2q-gate and T counts).
-* Scaling note: for n countries the annual state space is 10^n (≈3.3n qubits per year); loading a general joint distribution is the open bottleneck (cf. Herbert 2021, Chakrabarti et al. 2021).
+* **v1** (`run_benchmarks.py`): MLAE vs the brief's four baselines. Ideal MLAE beat Monte Carlo, Sobol
+  and stratified sampling on the rare tail, but plateaued around 15% RMSE and only edged importance
+  sampling. Details are in the v1 sections of `results/results.json`.
+* **v2** (`run_benchmarks_v2.py`, `resources/`): IQAE, importance-weighted IQAE, two stronger
+  classical baselines, and verified gate-level costing. See [docs/V2_NOTES.md](docs/V2_NOTES.md).
 
 ## Phase 2 plan (summary)
-1. Compile A and Q to a gate set; report qubits, depth, 2-qubit/T counts and shots.
-2. Replace ideal MLAE with Iterative QAE and run noisy simulation on a GPU.
-3. Quantum-inspired route: tensor-train/MPS representation of the joint annual law to extend to n = 5+ countries (10^5 states), benchmarked against MC/IS.
-4. Variance-reduced QAE (importance-weighted amplitude) for the rare joint tail.
 
-## Environment and hardware
-Python 3.12.3, numpy 2.5.4, scipy 1.18.1, matplotlib 3.11.2 (as run); CPU only (1 core). Fixed seed 2026.
+1. Build a unary-iteration QROM for the weight lookup and an ancilla-assisted reflection; re-cost with
+   a full fault-tolerant estimator.
+2. Run noisy simulation and small-k hardware demonstrations with error mitigation, on GPU credits.
+3. Scale to n ≥ 5 countries with factor-structured loaders and tensor-train references.
+4. Cover the World Bank event-loss-table worked example and importance weighting for expectation
+   targets.
 
 ## AI-use disclosure
-This prototype's code, benchmark harness and README were drafted with the assistance of Claude (Anthropic). The authors are responsible for reviewing and verifying the code and results before submission. Model equations and benchmark definitions are from the ADB Quantum Challenge brief.
 
-## v2 additions (branch `feat/iqae-weighted-resources`)
-See **[docs/V2_NOTES.md](docs/V2_NOTES.md)**. In short:
-* **Iterative QAE** replaces fixed-schedule MLAE: no 15% plateau, with confidence intervals (coverage 0.95-1.00).
-* **Importance-weighted IQAE** (grid-snapped proposal, exactly unbiased): on the rare joint tail it is 4-9x more accurate than the best classical method at equal budget, in all five scenarios. On expected loss, stratified importance sampling (a stronger classical baseline added in v2) still wins.
-* **Gate-level resource estimate**: oracles built and verified in Qiskit (plain A: 39 qubits, 850 CX; Grover operator: 6,494 CX), T-counts, surface-code distance, NISQ feasibility, error mitigation and hardware modality.
-
-![v2 error vs budget](results/v2_error_vs_budget.png)
+The code, benchmark harnesses, documentation and submission materials were drafted with the
+assistance of Claude (Anthropic). The authors are responsible for reviewing and verifying the code
+and results. Model equations and benchmark definitions come from the ADB Quantum Challenge brief.
